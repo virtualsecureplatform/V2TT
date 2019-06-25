@@ -2,15 +2,21 @@
 import networkx as nx
 import json
 import sys
+import matplotlib.pyplot as plt
+
+gate_type={}
 
 CircuitGraph = nx.DiGraph()
 CircuitGraph.add_node("In")
+gate_type["In"] = "In"
 CircuitGraph.add_node("Out")
+gate_type["Out"] = "Out"
 
 json_netlist = json.load(open(sys.argv[1], 'r'))["modules"]
 
 for module_netlist in json_netlist.values():
     for port_json in module_netlist["ports"].values():
+        gate_type[port_json["bits"][0]] = port_json["bits"][0]
         if port_json["direction"] == "input":
             CircuitGraph.add_edge("In",port_json["bits"][0],weight = 0)
         elif port_json["direction"] == "output":
@@ -21,6 +27,7 @@ for module_netlist in json_netlist.values():
 
     for cell_json in module_netlist["cells"].items():
         CircuitGraph.add_node(cell_json[0],tyep = cell_json[1]["type"][2:])
+        gate_type[cell_json[0]] = cell_json[1]["type"][2:]
 
         for direction_json in cell_json[1]["port_directions"].items():
             if direction_json[1] == "input":
@@ -31,4 +38,5 @@ for module_netlist in json_netlist.values():
                 print("Cell Port Definition Error")
                 sys.exit(1)
 
-nx.nx_agraph.view_pygraphviz(CircuitGraph, prog='fdp') 
+nx.draw(CircuitGraph,labels=gate_type)
+plt.show()
