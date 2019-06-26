@@ -18,9 +18,9 @@ for module_netlist in json_netlist.values():
     for port_json in module_netlist["ports"].values():
         gate_type[port_json["bits"][0]] = port_json["bits"][0]
         if port_json["direction"] == "input":
-            CircuitGraph.add_edge("In",port_json["bits"][0],weight = 0)
+            CircuitGraph.add_edge("In",port_json["bits"][0],weight = 0,type="input")
         elif port_json["direction"] == "output":
-            CircuitGraph.add_edge(port_json["bits"][0],"Out",weight = 0)
+            CircuitGraph.add_edge(port_json["bits"][0],"Out",weight = 0,type="output")
         else:
             print("Port Definition Error")
             sys.exit(1)
@@ -29,6 +29,7 @@ for module_netlist in json_netlist.values():
         CircuitGraph.add_node(cell_json[0],tyep = cell_json[1]["type"][2:])
         gate_type[cell_json[0]] = cell_json[1]["type"][2:]
 
+        loop = 0
         for direction_json in cell_json[1]["port_directions"].items():
             if direction_json[1] == "input":
                 CircuitGraph.add_edge(cell_json[1]["connections"][direction_json[0]][0],cell_json[0],weight = -1)
@@ -38,5 +39,9 @@ for module_netlist in json_netlist.values():
                 print("Cell Port Definition Error")
                 sys.exit(1)
 
-nx.draw(CircuitGraph,labels=gate_type)
-plt.show()
+print(list(nx.DiGraph.predecessors(CircuitGraph,"$abc$49$auto$blifparse.cc:371:parse_blif$50")))
+#nx.draw(CircuitGraph,labels=gate_type)
+#plt.show()
+
+#for stage in dict(nx.algorithms.shortest_paths.weighted.single_source_bellman_ford_path_length(CircuitGraph,"In")).items():
+    #print(stage)
