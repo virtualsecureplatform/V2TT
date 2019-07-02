@@ -10,15 +10,12 @@ output_array = []
 
 CircuitGraph = nx.DiGraph()
 CircuitGraph.add_node("In")
-gate_type["In"] = "In"
 CircuitGraph.add_node("Out")
-gate_type["Out"] = "Out"
 
 json_netlist = json.load(open(sys.argv[1], 'r'))["modules"]
 
 for module_netlist in json_netlist.values():
     for port_json in module_netlist["ports"].values():
-        gate_type[port_json["bits"][0]] = port_json["bits"][0]
         if port_json["direction"] == "input":
             CircuitGraph.add_edge("In",port_json["bits"][0],weight = 0,type="input")
             input_array.append(port_json["bits"][0])
@@ -30,20 +27,14 @@ for module_netlist in json_netlist.values():
             sys.exit(1)
 
     for cell_json in module_netlist["cells"].items():
-        CircuitGraph.add_node(cell_json[0],type = cell_json[1]["type"][2:],input = [])
-        print(CircuitGraph[cell_json[0]])
-        CircuitGraph[cell_json[0]]["input"] = []
-        print(CircuitGraph[cell_json[0]])
+        CircuitGraph.add_node(cell_json[0],type = cell_json[1]["type"][2:])
         gate_type[cell_json[0]] = cell_json[1]["type"][2:]
 
-        loop = 0
         for direction_json in cell_json[1]["port_directions"].items():
             if direction_json[1] == "input":
                 CircuitGraph.add_edge(cell_json[1]["connections"][direction_json[0]][0],cell_json[0],weight = -1)
-                CircuitGraph[cell_json[0]]["input"].append(cell_json[1]["connections"][direction_json[0]][0])
             elif direction_json[1] == "output":
-                CircuitGraph.add_edge(cell_json[0],cell_json[1]["connections"][direction_json[0]][0],type = "wire",weight = 0)
-                CircuitGraph[cell_json[0]]["output"] = cell_json[1]["connections"][direction_json[0]][0]
+                CircuitGraph.add_edge(cell_json[0],cell_json[1]["connections"][direction_json[0]][0],weight = 0)
 
             else:
                 print("Cell Port Definition Error")
@@ -54,18 +45,48 @@ for module_netlist in json_netlist.values():
 #plt.show()
 
 total_step = -nx.algorithms.shortest_paths.weighted.bellman_ford_path_length(CircuitGraph,"In","Out")
-wire_array = [[] for i in range(total_step)]
+wire_array = [[] for i in range(total_step-1)]
 gate_array = [[] for i in range(total_step)]
 
 for stage in dict(nx.algorithms.shortest_paths.weighted.single_source_bellman_ford_path_length(CircuitGraph,"In")).items():
     #print(stage)
-    typekey = CircuitGraph[stage[0]].get("type")
-    if typekey != None and typekey != "input" and typekey != "output":
-        if typekey == "wire":
-            wire_array[-stage[1]-1].append(stage[0])
-        else:
-            gate_array[-stage[1]-1].append([stage[0],typekey,CircuitGraph[stage[0]]["input"],CircuitGraph[stage[0]]["output"]])
+    if type(stage[0]) is str and stage[0] != "In" and stage[0] != "Out":
+        gate_array[-stage[1]-1].append(stage[0])
+        if -stage[1] != total_step:
+            wire_array[-stage[1]-1].append(CircuitGraph[stage[0]].successors()[0])
 
-print(input_array)
-print(output_array)
-print(gate_array)
+#print(input_array)
+#print(output_array)
+#print(gate_array)
+#print(gate_type)
+
+template_array = [[] for i in range(total_step)]
+
+for i in range(total_step):
+    for gate_stage in gate_array:
+        for gate in gate_stage:
+            result = ""
+            ca = ""
+            cb = ""
+
+            wire = list(CircuitGraph.successors(gate))[0]
+            if wire in output_array:
+                result = "cipherout[" + str(output_array.index(wire)) + "]"
+            else :
+                result = "cipherwireout["+ str(wire_array[i].index(wire)) + "]"
+            
+            wire = list(CircuitGraph.predecessors(gate))[0]
+            if wire in input_array:
+                ca = "cipherin[" + str(input_array.index(wire)) + "]"
+            else :
+                ca = "cipherwirein[" + str(wire_array[i-1].index(wire)) + "]"
+
+            wire = list(CircuitGraph.predecessors(gate))[1]
+            if wire in input_array:
+                cb = "cipherin["  + str(input_array.index(wire)) +"]"
+            else :
+                cb = "cipherwirein[" + str(wire_array[i-1].index(wire)) + "]"
+
+            template_array[i].append([gate_type[gate],result,ca,cb])
+
+print(template_array)

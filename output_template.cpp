@@ -13,8 +13,9 @@ int main() {
     const TFheGateBootstrappingParameterSet* params = bk->params;
 
     //read the 2x16 ciphertexts
-    LweSample* cipherin = new_gate_bootstrapping_ciphertext_array({{ wire_max }}, params);
-    LweSample* cipherout = new_gate_bootstrapping_ciphertext_array({{ wire_max }}, params);
+    LweSample* cipherin = new_gate_bootstrapping_ciphertext_array({{ input_width }}, params);
+    LweSample* cipherout = new_gate_bootstrapping_ciphertext_array({{ output_width }}, params);
+    LweSample* cipherwire = new_gate_bootstrapping_ciphertext_array({{ wire_max }}, params);
 
     //reads the 2x16 ciphertexts from the cloud file
     FILE* cloud_data = fopen("cloud.data","rb");
@@ -22,6 +23,9 @@ int main() {
     fclose(cloud_data);
 
     //do some operations on the ciphertexts:
+    {{%for stage in template_array}}
+    {{%for gate in stage}}
+    boots{{ gate[0] }}
     
 
     //export the 32 ciphertexts to a file (for the cloud)
