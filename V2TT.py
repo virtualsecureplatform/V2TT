@@ -3,6 +3,7 @@ import networkx as nx
 import json
 import sys
 import matplotlib.pyplot as plt
+from jinja2 import Template, Environment, FileSystemLoader
 
 gate_type={}
 input_array = []
@@ -89,4 +90,8 @@ for i in range(total_step):
 
             template_array[i].append([gate_type[gate],result,ca,cb])
 
-print(template_array)
+#print(template_array)
+print([len(x) for x in wire_array])
+
+data ={"input_width":len(input_array), "output_width":len(output_array), "wire_max":max([len(x) for x in wire_array].append(0)), "template_array":template_array}
+print(str(Environment(loader=FileSystemLoader('.')).get_template("output_template.cpp").render(data)))
