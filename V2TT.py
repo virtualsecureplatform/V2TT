@@ -28,8 +28,8 @@ for module_netlist in json_netlist.values():
             sys.exit(1)
 
     for cell_json in module_netlist["cells"].items():
-        CircuitGraph.add_node(cell_json[0],type = cell_json[1]["type"][2:])
-        gate_type[cell_json[0]] = cell_json[1]["type"][2:]
+        CircuitGraph.add_node(cell_json[0])
+        gate_type[cell_json[0]] = cell_json[1]["type"][2:-1]
 
         for direction_json in cell_json[1]["port_directions"].items():
             if direction_json[1] == "input":
@@ -91,7 +91,12 @@ for i in range(total_step):
             template_array[i].append([gate_type[gate],result,ca,cb])
 
 #print(template_array)
-print([len(x) for x in wire_array])
 
-data ={"input_width":len(input_array), "output_width":len(output_array), "wire_max":max([len(x) for x in wire_array].append(0)), "template_array":template_array}
-print(str(Environment(loader=FileSystemLoader('.')).get_template("output_template.cpp").render(data)))
+wire_max = 0
+if wire_array != []:
+    wire_max = max([len(x) for x in wire_array])
+data ={"input_width":len(input_array), "output_width":len(output_array), "wire_max":wire_max, "template_array":template_array}
+cloud_template_result = Environment(loader=FileSystemLoader('.')).get_template("cloud.cpp.template").render(data)
+#print(str(cloud_template_result))
+with open("cloud.cpp","w") as f:
+    f.write(cloud_template_result)
