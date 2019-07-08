@@ -2,6 +2,7 @@
 import networkx as nx
 import json
 import sys
+from os.path import dirname
 import matplotlib.pyplot as plt
 from jinja2 import Template, Environment, FileSystemLoader
 
@@ -98,5 +99,5 @@ if wire_array != []:
 data ={"input_width":len(input_array), "output_width":len(output_array), "wire_max":wire_max, "template_array":template_array}
 cloud_template_result = Environment(loader=FileSystemLoader('.')).get_template("cloud.cpp.template").render(data)
 #print(str(cloud_template_result))
-with open("cloud.cpp","w") as f:
+with open(dirname(sys.argv[1])+"/cloud.cpp","w") as f:
     f.write(cloud_template_result)
