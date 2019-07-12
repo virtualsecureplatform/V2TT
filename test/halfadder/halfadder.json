@@ -1,0 +1,99 @@
+{
+  "creator": "Yosys 0.8 (git sha1 UNKNOWN, clang 8.0.0-3 -fPIC -Os)",
+  "modules": {
+    "halfadder": {
+      "attributes": {
+        "top": 1,
+        "src": "halfadder.v:5"
+      },
+      "ports": {
+        "a": {
+          "direction": "input",
+          "bits": [ 2 ]
+        },
+        "b": {
+          "direction": "input",
+          "bits": [ 3 ]
+        },
+        "c": {
+          "direction": "output",
+          "bits": [ 4 ]
+        },
+        "s": {
+          "direction": "output",
+          "bits": [ 5 ]
+        }
+      },
+      "cells": {
+        "$abc$49$auto$blifparse.cc:371:parse_blif$50": {
+          "hide_name": 1,
+          "type": "$_AND_",
+          "model": "$_AND_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 3 ],
+            "B": [ 2 ],
+            "Y": [ 4 ]
+          }
+        },
+        "$abc$49$auto$blifparse.cc:371:parse_blif$51": {
+          "hide_name": 1,
+          "type": "$_XOR_",
+          "model": "$_XOR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 3 ],
+            "B": [ 2 ],
+            "Y": [ 5 ]
+          }
+        }
+      },
+      "netnames": {
+        "a": {
+          "hide_name": 0,
+          "bits": [ 2 ],
+          "attributes": {
+            "src": "halfadder.v:6"
+          }
+        },
+        "b": {
+          "hide_name": 0,
+          "bits": [ 3 ],
+          "attributes": {
+            "src": "halfadder.v:7"
+          }
+        },
+        "c": {
+          "hide_name": 0,
+          "bits": [ 4 ],
+          "attributes": {
+            "src": "halfadder.v:8"
+          }
+        },
+        "s": {
+          "hide_name": 0,
+          "bits": [ 5 ],
+          "attributes": {
+            "src": "halfadder.v:9"
+          }
+        }
+      }
+    }
+  }
+}
