@@ -1,3 +1,9 @@
 *.out
 *.cpp
 /.vsvode
+*.data
+*.key
+*.anno
+*.fir
+/test/*/project
+/test/*/target
