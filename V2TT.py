@@ -86,19 +86,19 @@ for i in range(total_step):
         if wire in output_array:
             result = "cipherout[" + str(output_array.index(wire)) + "]"
         else :
-            result = "cipherwireout["+ str(wire_array.index(wire)) + "]"
+            result = "cipherwire["+ str(wire_array.index(wire)) + "]"
 
         wire = module_netlist["cells"][gate]["connections"]["A"][0]
         if wire in input_array:
             ca = "cipherin[" + str(input_array.index(wire)) + "]"
         else :
-            ca = "cipherwirein[" + str(wire_array.index(wire)) + "]"
+            ca = "cipherwire[" + str(wire_array.index(wire)) + "]"
 
         wire = module_netlist["cells"][gate]["connections"]["B"][0]
         if wire in input_array:
             cb = "cipherin["  + str(input_array.index(wire)) +"]"
         else :
-            cb = "cipherwirein[" + str(wire_array.index(wire)) + "]"
+            cb = "cipherwire[" + str(wire_array.index(wire)) + "]"
 
         template_array[i].append([gate_type[gate],result,ca,cb])
 

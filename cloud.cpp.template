@@ -17,8 +17,7 @@ int main() {
     //read the 2x16 ciphertexts
     LweSample* cipherin = new_gate_bootstrapping_ciphertext_array({{ input_width }}, params);
     LweSample* cipherout = new_gate_bootstrapping_ciphertext_array({{ output_width }}, params);
-    LweSample* cipherwirein = new_gate_bootstrapping_ciphertext_array({{ wire_max }}, params);
-    LweSample* cipherwireout = new_gate_bootstrapping_ciphertext_array({{ wire_max }}, params);
+    LweSample* cipherwire = new_gate_bootstrapping_ciphertext_array({{ wire_max }}, params);
 
     //reads the 2x16 ciphertexts from the cloud file
     FILE* cloud_data = fopen("cloud.data","rb");
@@ -31,10 +30,6 @@ int main() {
     boots{{ gate[0] }}(&{{ gate[1] }},&{{ gate[2] }},&{{ gate[3] }},bk);
     {%- endfor %}    
     {%- if not loop.last %}
-    std::swap(cipherwirein,cipherwireout);
-    for(int i = 0;i<{{wire_max}};i++){
-        cipherwireout[i] = cipherwirein[i];
-    }
     {% endif %}
     {%- endfor %}
 
@@ -46,8 +41,7 @@ int main() {
     //clean up all pointers
     delete_gate_bootstrapping_ciphertext_array({{ input_width }}, cipherin);
     delete_gate_bootstrapping_ciphertext_array({{ output_width }}, cipherout);
-    delete_gate_bootstrapping_ciphertext_array({{ wire_max }}, cipherwirein);
-    delete_gate_bootstrapping_ciphertext_array({{ wire_max }}, cipherwireout);
+    delete_gate_bootstrapping_ciphertext_array({{ wire_max }}, cipherwire);
     delete_gate_bootstrapping_cloud_keyset(bk);
 
 }

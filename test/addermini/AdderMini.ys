@@ -10,8 +10,8 @@ proc; opt; fsm; opt; memory; opt
 # mapping to internal cell library
 techmap; opt
 
-# mapping logic to gates. I'm not sure but fast option seems to be necessary to get correct circuit.
-abc -g gates,MUX -fast
+# mapping logic to gates.
+abc -g gates,MUX
 
 # cleanup
 clean -purge
