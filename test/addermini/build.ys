@@ -17,7 +17,7 @@ abc -g gates,MUX
 clean -purge
 
 # write synthesized design
-write_json AdderMini.json
+write_json circuit.json
 
 #check output circuit
 show

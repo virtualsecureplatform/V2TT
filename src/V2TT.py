@@ -3,7 +3,7 @@ import networkx as nx
 import json
 import sys
 from os.path import dirname
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from jinja2 import Template, Environment, FileSystemLoader
 
 gate_type={}
