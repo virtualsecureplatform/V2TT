@@ -20,4 +20,4 @@ clean -purge
 write_json circuit.json
 
 #check output circuit
-show -prefix circuit
+show -prefix circuit -format svg
