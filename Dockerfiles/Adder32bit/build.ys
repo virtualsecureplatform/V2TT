@@ -1,8 +1,8 @@
 # read design 
-read_verilog Adder32bit.v
+read_verilog AdderMini.v
 
 # elaborate design hierarchy
-hierarchy -check -top Adder32bit
+hierarchy -check -top AdderMini
 
 # the high-level stuff
 proc; opt; fsm; opt; memory; opt
@@ -20,4 +20,4 @@ clean -purge
 write_json circuit.json
 
 #check output circuit
-show -prefix circuit
+show -prefix circuit -format svg -viewer
