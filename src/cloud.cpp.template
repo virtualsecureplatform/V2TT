@@ -3,9 +3,12 @@
 #include <stdio.h>
 #include <iostream>
 #include <cstring>
+#include <chrono>
 
 int main() {
-    
+    std::chrono::system_clock::time_point start, end; 
+    start = std::chrono::system_clock::now();
+
     //reads the cloud key from file
     FILE* cloud_key = fopen("cloud.key","rb");
     TFheGateBootstrappingCloudKeySet* bk = new_tfheGateBootstrappingCloudKeySet_fromFile(cloud_key);
@@ -47,5 +50,7 @@ int main() {
     delete_gate_bootstrapping_ciphertext_array({{ output_width }}, cipherout);
     delete_gate_bootstrapping_ciphertext_array({{ wire_max }}, cipherwire);
     delete_gate_bootstrapping_cloud_keyset(bk);
-
+    end = std::chrono::system_clock::now();
+    double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0);
+    printf("cloud time %lf[ms]\n", time);
 }
