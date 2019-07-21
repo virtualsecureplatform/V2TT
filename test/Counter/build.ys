@@ -1,0 +1,23 @@
+# read design 
+read_verilog Counter.v
+
+# elaborate design hierarchy
+hierarchy -check -top Counter
+
+# the high-level stuff
+proc; opt; fsm; opt; memory; opt
+
+# mapping to internal cell library
+techmap; opt
+
+# mapping logic to gates.
+abc -g gates,MUX
+
+# cleanup
+clean -purge
+
+# write synthesized design
+write_json circuit.json
+
+#check output circuit
+show -prefix circuit -format svg

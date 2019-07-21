@@ -27,20 +27,32 @@ int main() {
     for (int i=0; i<{{ input_width }}; i++) import_gate_bootstrapping_ciphertext_fromFile(cloud_data, &cipherin[i], params);
     fclose(cloud_data);
 
-    //do some operations on the ciphertexts:
-    {%- for stage in template_array %}
-    #pragma omp parallel sections
-    {
-    {%- for gate in stage %}
-    #pragma omp section
-    boots{{ gate[0] }}(&{{ gate[1] }},&{{ gate[2] }},&{{ gate[3] }},bk);
-    {%- if loop.last %}
-    }
-    {% endif %}
-    {%- endfor %}    
-    {%- endfor %}
+    std::cout << "How many times this circuit have to be evaluated?" << std::endl;
+    int number_of_clock;
+    std::cin >> number_of_clock;
 
-    //export the 32 ciphertexts to a file (for the cloud)
+    //do operations described as circuit:
+    for(int clock = 0; clock < number_of_clock; clock++){
+        {%- for stage in gate_template_array %}
+        #pragma omp parallel sections
+        {
+        {%- for gate in stage %}
+        #pragma omp section
+        boots{{ gate[0] }}(&{{ gate[1] }},&{{ gate[2] }},&{{ gate[3] }},bk);
+        {%- endfor %}    
+        }
+        {%- endfor %}
+        
+        #pragma omp parallel sections
+        {
+        {%- for DFF in DFF_array %}
+        #pragma omp section
+        lweCopy(&cipherin[{{ DFF[0] }}],&cipherout[{{ DFF[1] }}],bk->params->in_out_params);
+        {%- endfor %}
+        }
+    }
+
+    //export the {{ output_width }} ciphertexts to a file (for the cloud)
     FILE* answer_data = fopen("answer.data","wb");
     for (int i=0; i<{{ output_width }}; i++) export_gate_bootstrapping_ciphertext_toFile(answer_data, &cipherout[i], params);
     fclose(answer_data);
