@@ -7,9 +7,9 @@ This is the repository for the transpiler to compile Verilog to C++ code with TF
 ```
 git clone https://github.com/virtualsecureplatform/V2TT.git
 cd V2TT/Dockerfiles
-make
+sudo make
 cd ../test/Adder32bit
-make circuit
-make V2TT
-make tfhe
+sudo make circuit
+sudo make V2TT
+sudo make tfhe
 ```
