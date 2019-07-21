@@ -7,18 +7,19 @@ all: client.cpp verify.cpp cloud.cpp
 	./verify
 
 chisel: build.sbt
-	docker run --rm -v $(PWD):/build chisel /bin/sh -c "cd /build && sbt run && rm *.anno *.fir"
+	docker run --rm -v $(PWD)/src:/build/src chisel /bin/sh -c "cd /build && sbt run && mv *.v src"
+	mv src/*.v .
 
 yosys:
-	xhost local:
 	docker run --rm -v /tmp/.X11-unix/:/tmp/.X11-unix -v $(PWD):/build yosys:0.8 /bin/sh -c "cd /build && yosys build.ys && rm circuit.dot"
 	gpicview circuit.svg
 
-tfhe: cloud.cpp
-	docker run -it --rm -v  $(PWD):/build tfhe-gcc /bin/sh -c "cd /build && clang++ -ltfhe-fftw -o cloud cloud.cpp && clang++ -ltfhe-fftw client.cpp -o client && clang++ -ltfhe-fftw -o verify verify.cpp && ./client && ./cloud && ./verify"
-
 V2TT: 
 	docker run --rm -v $(PWD)/../../src:/src -v $(PWD):/build networkx-ninja2-python3 /bin/sh -c "cd /src && python3 V2TT.py /build/circuit.json"
+
+tfhe: cloud.cpp
+	docker run -it --rm -v  $(PWD):/build tfhe-ubuntu /bin/sh -c "cd /build && clang++ -ltfhe-fftw -fopenmp -o cloud cloud.cpp && clang++ -ltfhe-fftw client.cpp -o client && clang++ -ltfhe-fftw -o verify verify.cpp && ./client && ./cloud && ./verify"
+#if you want to run binary in local, you have to install tfhe and musl.
 
 .PHONY: clean
 clean :

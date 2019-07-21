@@ -85,7 +85,7 @@ wire_array = list(wire_set) #To map wires to c++ array, give an order to wires.
 
 template_array = [[] for i in range(total_step)]  #This array record output string for c++ code template.
 
-#record output strings based on previous analyzing. Cullentry,parallelization is not implemented. So stage analyzation comes to nothing.
+#record output strings based on previous analyzing. Currentry,parallelization is implemented by openMP per stage.
 for i in range(total_step):
     gate_stage = gate_array[i]
     for gate in gate_stage:

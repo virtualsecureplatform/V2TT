@@ -2,10 +2,14 @@ FROM alpine
 
 LABEL maintainer="nindanaoto <dirty.knife603@gmail.com>"
 
-RUN apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing sbt nss
+RUN apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing sbt nss && mkdir -p /build/src/main/scala
 
-COPY Adder32bit /tmp
+COPY dummy/build.sbt /build
 
-WORKDIR /tmp
+COPY dummy/Adder32bit.scala /build/src/main/scala
 
-RUN sbt run
+WORKDIR /build
+
+RUN sbt run 
+
+RUN rm -r /build/src

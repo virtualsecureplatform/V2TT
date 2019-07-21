@@ -26,11 +26,15 @@ int main() {
 
     //do some operations on the ciphertexts:
     {%- for stage in template_array %}
+    #pragma omp parallel sections
+    {
     {%- for gate in stage %}
+    #pragma omp section
     boots{{ gate[0] }}(&{{ gate[1] }},&{{ gate[2] }},&{{ gate[3] }},bk);
-    {%- endfor %}    
-    {%- if not loop.last %}
+    {%- if loop.last %}
+    }
     {% endif %}
+    {%- endfor %}    
     {%- endfor %}
 
     //export the 32 ciphertexts to a file (for the cloud)
