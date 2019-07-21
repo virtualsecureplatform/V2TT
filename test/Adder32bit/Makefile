@@ -10,9 +10,9 @@ circuit: build.sbt
 	docker run --rm -v ${shell pwd}/src:/build/src chisel /bin/sh -c "cd /build && sbt run && mv *.v src"
 	mv src/*.v .
 	docker run --rm -v /tmp/.X11-unix/:/tmp/.X11-unix -v ${shell pwd}:/build yosys:0.8 /bin/sh -c "cd /build && yosys build.ys && rm circuit.dot"
-	gpicview circuit.svg
+	xdg-open circuit.svg
 
-V2TT: 
+V2TT:
 	docker run --rm -v $(shell pwd)/../../src:/src -v $(shell pwd):/build networkx-ninja2-python3 /bin/sh -c "cd /src && python3 V2TT.py /build/circuit.json"
 
 tfhe: cloud.cpp
