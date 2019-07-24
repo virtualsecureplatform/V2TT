@@ -24,6 +24,8 @@ CircuitGraph.add_node("Out")
 
 json_netlist = json.load(open(sys.argv[1], 'r'))["modules"]
 
+wire_set = set() #Currently, this implementation holding all wire's data all time. So, order is not important. This is subjecto to change.
+
 for module_netlist in json_netlist.values():
     for port_json in module_netlist["ports"].values(): #Analyze circuit's input and output, then record it to arrays.
         if port_json["direction"] == "input":
@@ -58,27 +60,43 @@ for module_netlist in json_netlist.values():
             CircuitGraph.add_edge(cell_json[1]["connections"]["A"][0],cell_json[0],weight = -1) #connect input wire to gate
             CircuitGraph.add_edge(cell_json[1]["connections"]["B"][0],cell_json[0],weight = -1) #connect input wire to gate
             CircuitGraph.add_edge(cell_json[0],cell_json[1]["connections"]["Y"][0],weight = 0) #connect gate to output wire
+            out_wire = cell_json[1]["connections"]["Y"][0]
+            wire_set.add(cell_json[1]["connections"]["Y"][0])
+
+wire_array = list(wire_set - set(output_array)) #To map wires to c++ array, give an order to wires.
 
 #print(list(nx.DiGraph.predecessors(CircuitGraph,"$abc$49$auto$blifparse.cc:371:parse_blif$50")))
 #nx.draw(CircuitGraph,labels=gate_type)
 #plt.show()
 
 total_step = -nx.algorithms.shortest_paths.weighted.bellman_ford_path_length(CircuitGraph,"In","Out") #Knowing Maximal stage may be simplify algorithm.
-
-#Initialize
-wire_set = set() #Currently, this implementation holding all wire's data all time. So, order is not important. This is subjecto to change.
-gate_array = [[] for i in range(total_step)] #This array records which gates will be evaluated in each stage.
 #print(total_step)
 
-for stage in dict(nx.algorithms.shortest_paths.weighted.single_source_bellman_ford_path_length(CircuitGraph,"In")).items(): #Analyzing gates' stage.
-    #print(stage)
-    if type(stage[0]) is str and stage[0] != "In" and stage[0] != "Out":
-        gate_array[-stage[1]-1].append(stage[0])
-        out_wire = CircuitGraph.successors(stage[0])
-        if not(out_wire in output_array):
-            wire_set.add(list(CircuitGraph.successors(stage[0]))[0])
+#Initialize
+gate_array = [[] for i in range(total_step)] #This array records which gates will be evaluated in each stage.
+wire_generate_dict = {i:total_step-2 for i in wire_array}
+wire_delete_dict = {i:0 for i in wire_array}
 
-wire_array = list(wire_set) #To map wires to c++ array, give an order to wires.
+for gate in dict(nx.algorithms.shortest_paths.weighted.single_source_bellman_ford_path_length(CircuitGraph,"In")).items(): #Analyzing gates' stage.
+    #print(gate)
+    if type(gate[0]) is str and gate[0] != "In" and gate[0] != "Out":
+        stage = -gate[1]-1
+        gate_array[stage].append(gate[0])
+        out_wire = list(CircuitGraph.successors(gate[0]))[0]
+        if not(out_wire in output_array):
+            wire_generate_dict[out_wire] = min(stage,wire_generate_dict[out_wire]) #When is the wire's first use.
+        input_wires = list(CircuitGraph.predecessors(gate[0]))
+        if not(input_wires[0] in input_array):
+            wire_delete_dict[input_wires[0]] = max(wire_delete_dict[input_wires[0]],stage) #When is the wire's last use
+        if not(input_wires[1] in input_array):
+            wire_delete_dict[input_wires[1]] = max(wire_delete_dict[input_wires[1]],stage) #When is the wire's last use
+
+wire_generate_array = [[] for i in range(total_step-1)] #Hold when wires should be generated
+wire_delete_array = [[] for i in range(total_step)] #Hold when wires should be deleted
+
+for i in wire_array:
+    wire_generate_array[wire_generate_dict[i]].append(i)
+    wire_delete_array[wire_delete_dict[i]].append(i)
 
 #print(input_array)
 #print(output_array)
@@ -87,10 +105,19 @@ wire_array = list(wire_set) #To map wires to c++ array, give an order to wires.
 #print(gate_type)
 
 gate_template_array = [[] for i in range(total_step)]  #This array record output string for c++ code template.
+current_wire = []
 
 #record output strings based on previous analyzing. Currentry,parallelization is implemented by openMP per stage.
 for i in range(total_step):
     gate_stage = gate_array[i]
+
+    if i != total_step-1:
+        for gen_wire in wire_generate_array[i]:
+            if -1 in current_wire:
+                current_wire[current_wire.index(-1)] = gen_wire #If there are empty space which is freed by deleting, use it for memory efficiency.
+            else:
+                current_wire.append(gen_wire) #If wires array are full, add new space.
+
     for gate in gate_stage:
         result = ""
         ca = ""
@@ -100,29 +127,33 @@ for i in range(total_step):
         if wire in output_array:
             result = "cipherout[" + str(output_array.index(wire)) + "]"
         else :
-            result = "cipherwire["+ str(wire_array.index(wire)) + "]"
+            result = "cipherwire["+ str(current_wire.index(wire)) + "]"
 
         wire = module_netlist["cells"][gate]["connections"]["A"][0]
         if wire in input_array:
             ca = "cipherin[" + str(input_array.index(wire)) + "]"
         else :
-            ca = "cipherwire[" + str(wire_array.index(wire)) + "]"
+            ca = "cipherwire[" + str(current_wire.index(wire)) + "]"
 
         wire = module_netlist["cells"][gate]["connections"]["B"][0]
         if wire in input_array:
             cb = "cipherin["  + str(input_array.index(wire)) +"]"
         else :
-            cb = "cipherwire[" + str(wire_array.index(wire)) + "]"
+            cb = "cipherwire[" + str(current_wire.index(wire)) + "]"
 
         gate_template_array[i].append([gate_type[gate],result,ca,cb])
+
+    for delete_wire in wire_delete_array[i]:
+        current_wire[current_wire.index(delete_wire)] = -1 #deleted wires are marked as deleted
 
 DFF_template_array=[]
 for DFF in DFF_array:
     DFF_template_array.append([input_array.index(DFF[0]),output_array.index(DFF[1])])
 
 #print(template_array)
+#print(len(current_wire))
 
-data ={"input_width":len(input_array), "output_width":len(output_array), "wire_max":len(wire_array), "gate_template_array":gate_template_array,"DFF_array":DFF_template_array,"number_of_DFF":len(DFF_template_array)} #Map recorded arrays to template's input.
+data ={"input_width":len(input_array), "output_width":len(output_array), "wire_max":len(current_wire), "gate_template_array":gate_template_array,"DFF_array":DFF_template_array,"number_of_DFF":len(DFF_template_array)} #Map recorded arrays to template's input.
 cloud_template_result = Environment(loader=FileSystemLoader('.')).get_template("cloud.cpp.template").render(data) #Load template
 #print(str(cloud_template_result))
 with open(dirname(sys.argv[1])+"/cloud.cpp","w") as f:

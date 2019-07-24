@@ -24,7 +24,9 @@ int main() {
     fclose(cloud_key);
    
     //generate encrypt the input
-    int16_t plaintext = 0xFFFF;
+    int16_t plaintext;
+    std::cout << "Input amt(0~15)" << std::endl;
+    std::cin >> plaintext;
     LweSample* ciphertext = new_gate_bootstrapping_ciphertext_array(14, params);
     bootsSymEncrypt(&ciphertext[0], 0, key);
     bootsSymEncrypt(&ciphertext[1], 0, key);
