@@ -6,8 +6,6 @@
 #include <chrono>
 
 int main() {
-    std::chrono::system_clock::time_point start, end; 
-    start = std::chrono::system_clock::now();
 
     //reads the cloud key from file
     FILE* cloud_key = fopen("cloud.key","rb");
@@ -31,6 +29,8 @@ int main() {
     int number_of_clock;
     std::cin >> number_of_clock;
 
+    std::chrono::system_clock::time_point start, end; 
+    start = std::chrono::system_clock::now();
     //do operations described as circuit:
     for(int clock = 0; clock < number_of_clock; clock++){
         {%- for stage in gate_template_array %}
