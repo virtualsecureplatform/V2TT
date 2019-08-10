@@ -4,8 +4,17 @@ read_verilog Adder32bit.v
 # elaborate design hierarchy
 hierarchy -check -top Adder32bit
 
+#delete constants
+opt_expr; opt_clean;
+
+#detect error
+check
+
+#map adder
+wreduce; alumacc;
+
 # the high-level stuff
-proc; opt; fsm; opt; memory; opt
+share; proc; opt; fsm; opt; memory; opt
 
 # mapping to internal cell library
 techmap; opt

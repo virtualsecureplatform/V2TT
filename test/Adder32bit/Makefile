@@ -16,7 +16,7 @@ V2TT:
 	docker run --rm -v $(shell pwd)/../../src:/src -v $(shell pwd):/build networkx-ninja2-python3 /bin/sh -c "cd /src && python3 V2TT.py /build/circuit.json"
 
 tfhe: cloud.cpp
-	docker run -it --rm -v  $(shell pwd):/build tfhe-ubuntu /bin/sh -c "cd /build && clang++ -ltfhe-fftw -fopenmp -o cloud cloud.cpp && clang++ -ltfhe-fftw client.cpp -o client && clang++ -ltfhe-fftw -o verify verify.cpp && ./client && ./cloud && ./verify"
+	docker run -it --rm -v  $(shell pwd):/build tfhe-ubuntu /bin/sh -c "cd /build && clang++ -ltfhe-spqlios-fma -fopenmp -o cloud cloud.cpp && clang++ -ltfhe-fftw client.cpp -o client && clang++ -ltfhe-fftw -o verify verify.cpp && ./client && ./cloud && ./verify"
 #if you want to run binary in local, you have to install tfhe and musl.
 
 .PHONY: clean

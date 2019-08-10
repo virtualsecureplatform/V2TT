@@ -6,6 +6,10 @@
 #include <chrono>
 
 int main() {
+    std::cout << "How many times this circuit have to be evaluated?" << std::endl;
+    int number_of_clock;
+    std::cin >> number_of_clock;
+
     std::chrono::system_clock::time_point start, end; 
     start = std::chrono::system_clock::now();
 
@@ -26,10 +30,6 @@ int main() {
     FILE* cloud_data = fopen("cloud.data","rb");
     for (int i=0; i<{{ input_width }}; i++) import_gate_bootstrapping_ciphertext_fromFile(cloud_data, &cipherin[i], params);
     fclose(cloud_data);
-
-    std::cout << "How many times this circuit have to be evaluated?" << std::endl;
-    int number_of_clock;
-    std::cin >> number_of_clock;
 
     //do operations described as circuit:
     for(int clock = 0; clock < number_of_clock; clock++){
