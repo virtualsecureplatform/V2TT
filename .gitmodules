@@ -1,0 +1,3 @@
+[submodule "KRISP/amethyst"]
+	path = KRISP/amethyst
+	url = https://github.com/virtualsecureplatform/rv16k-amethyst.git
