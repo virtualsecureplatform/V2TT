@@ -24,7 +24,8 @@ CircuitGraph.add_node("Out")
 
 json_netlist = json.load(open(sys.argv[1], 'r'))["modules"]
 
-wire_set = set() #Currently, this implementation holding all wire's data all time. So, order is not important. This is subjecto to change.
+wire_set = set() #This hold all gate output
+gate_input_set = set() #This hold gate input wire to workwith wires which are not only outputs, but also inputs.
 
 for module_netlist in json_netlist.values():
     for port_json in module_netlist["ports"].values(): #Analyze circuit's input and output, then record it to arrays.
@@ -32,6 +33,7 @@ for module_netlist in json_netlist.values():
             for bit in port_json["bits"]:
                 CircuitGraph.add_edge("In",bit,weight = 0,type="input")
                 input_array.append(bit)
+                print(bit)
         elif port_json["direction"] == "output":
             for bit in port_json["bits"]:
                 CircuitGraph.add_edge(bit,"Out",weight = 0,type="output")
@@ -53,17 +55,22 @@ for module_netlist in json_netlist.values():
         if gate_name == "DFF_P":
             CircuitGraph.add_edge(cell_json[1]["connections"]["D"][0],"Out",weight = 0) #Connect input wire to output port
             output_array.append(cell_json[1]["connections"]["D"][0]) #Add input wire to output array
-            CircuitGraph.add_edge(cell_json[0],cell_json[1]["connections"]["Q"][0],weight = 0) #connect DFF to output wire
+            CircuitGraph.add_edge("In",cell_json[1]["connections"]["Q"][0],weight = 0) #connect input port to output wire
             input_array.append(cell_json[1]["connections"]["Q"][0]) #Add output wire to input port
             DFF_array.append([cell_json[1]["connections"]["Q"][0],cell_json[1]["connections"]["D"][0]])
+        elif gate_name == "NOT":
+            CircuitGraph.add_edge(cell_json[1]["connections"]["A"][0],cell_json[0],weight = -1) #connect input wire to gate
+            CircuitGraph.add_edge(cell_json[0],cell_json[1]["connections"]["Y"][0],weight = 0) #connect gate to output wire
+            wire_set.add(cell_json[1]["connections"]["Y"][0])
         else:
             CircuitGraph.add_edge(cell_json[1]["connections"]["A"][0],cell_json[0],weight = -1) #connect input wire to gate
             CircuitGraph.add_edge(cell_json[1]["connections"]["B"][0],cell_json[0],weight = -1) #connect input wire to gate
+            gate_input_set.add(cell_json[1]["connections"]["A"][0])
+            gate_input_set.add(cell_json[1]["connections"]["B"][0])
             CircuitGraph.add_edge(cell_json[0],cell_json[1]["connections"]["Y"][0],weight = 0) #connect gate to output wire
-            out_wire = cell_json[1]["connections"]["Y"][0]
             wire_set.add(cell_json[1]["connections"]["Y"][0])
 
-wire_array = list(wire_set - set(output_array)) #To map wires to c++ array, give an order to wires.
+wire_array = list(wire_set - (set(output_array) - gate_input_set)) #To map wires to c++ array, give an order to wires.
 
 #print(list(nx.DiGraph.predecessors(CircuitGraph,"$abc$49$auto$blifparse.cc:371:parse_blif$50")))
 #nx.draw(CircuitGraph,labels=gate_type)
@@ -78,7 +85,6 @@ wire_generate_dict = {i:total_step-2 for i in wire_array}
 wire_delete_dict = {i:0 for i in wire_array}
 
 for gate in dict(nx.algorithms.shortest_paths.weighted.single_source_bellman_ford_path_length(CircuitGraph,"In")).items(): #Analyzing gates' stage.
-    #print(gate)
     if type(gate[0]) is str and gate[0] != "In" and gate[0] != "Out":
         stage = -gate[1]-1
         gate_array[stage].append(gate[0])
@@ -86,10 +92,9 @@ for gate in dict(nx.algorithms.shortest_paths.weighted.single_source_bellman_for
         if not(out_wire in output_array):
             wire_generate_dict[out_wire] = min(stage,wire_generate_dict[out_wire]) #When is the wire's first use.
         input_wires = list(CircuitGraph.predecessors(gate[0]))
-        if not(input_wires[0] in input_array):
-            wire_delete_dict[input_wires[0]] = max(wire_delete_dict[input_wires[0]],stage) #When is the wire's last use
-        if not(input_wires[1] in input_array):
-            wire_delete_dict[input_wires[1]] = max(wire_delete_dict[input_wires[1]],stage) #When is the wire's last use
+        for input_wire in input_wires:
+            if not(input_wire in input_array) and not(input_wire in output_array):
+                wire_delete_dict[input_wire] = max(wire_delete_dict[input_wire],stage) #When is the wire's last use
 
 wire_generate_array = [[] for i in range(total_step-1)] #Hold when wires should be generated
 wire_delete_array = [[] for i in range(total_step)] #Hold when wires should be deleted
@@ -132,14 +137,20 @@ for i in range(total_step):
         wire = module_netlist["cells"][gate]["connections"]["A"][0]
         if wire in input_array:
             ca = "cipherin[" + str(input_array.index(wire)) + "]"
+        elif wire in output_array:
+            ca = "cipherout[" + str(output_array.index(wire)) + "]"
         else :
             ca = "cipherwire[" + str(current_wire.index(wire)) + "]"
-
-        wire = module_netlist["cells"][gate]["connections"]["B"][0]
-        if wire in input_array:
-            cb = "cipherin["  + str(input_array.index(wire)) +"]"
-        else :
-            cb = "cipherwire[" + str(current_wire.index(wire)) + "]"
+        if gate_type[gate] == "NOT":
+            cb = ""
+        else:
+            wire = module_netlist["cells"][gate]["connections"]["B"][0]
+            if wire in input_array:
+                cb = "cipherin["  + str(input_array.index(wire)) +"],"
+            elif wire in output_array:
+                cb = "cipherout[" + str(output_array.index(wire)) + "]"
+            else :
+                cb = "cipherwire[" + str(current_wire.index(wire)) + "],"
 
         gate_template_array[i].append([gate_type[gate],result,ca,cb])
 
