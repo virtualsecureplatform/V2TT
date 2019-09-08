@@ -25,7 +25,6 @@ CircuitGraph.add_node("Out")
 json_netlist = json.load(open(sys.argv[1], 'r'))["modules"]
 
 wire_set = set() #This hold all gate output
-gate_input_set = set() #This hold gate input wire to workwith wires which are not only outputs, but also inputs.
 
 for module_netlist in json_netlist.values():
     for port_json in module_netlist["ports"].values(): #Analyze circuit's input and output, then record it to arrays.
@@ -33,7 +32,6 @@ for module_netlist in json_netlist.values():
             for bit in port_json["bits"]:
                 CircuitGraph.add_edge("In",bit,weight = 0,type="input")
                 input_array.append(bit)
-                print(bit)
         elif port_json["direction"] == "output":
             for bit in port_json["bits"]:
                 CircuitGraph.add_edge(bit,"Out",weight = 0,type="output")
@@ -58,19 +56,26 @@ for module_netlist in json_netlist.values():
             CircuitGraph.add_edge("In",cell_json[1]["connections"]["Q"][0],weight = 0) #connect input port to output wire
             input_array.append(cell_json[1]["connections"]["Q"][0]) #Add output wire to input port
             DFF_array.append([cell_json[1]["connections"]["Q"][0],cell_json[1]["connections"]["D"][0]])
+
         elif gate_name == "NOT":
             CircuitGraph.add_edge(cell_json[1]["connections"]["A"][0],cell_json[0],weight = -1) #connect input wire to gate
             CircuitGraph.add_edge(cell_json[0],cell_json[1]["connections"]["Y"][0],weight = 0) #connect gate to output wire
             wire_set.add(cell_json[1]["connections"]["Y"][0])
+
+        elif gate_name == "MUX":
+            CircuitGraph.add_edge(cell_json[1]["connections"]["A"][0],cell_json[0],weight = -1) #connect input wire to gate
+            CircuitGraph.add_edge(cell_json[1]["connections"]["B"][0],cell_json[0],weight = -1) #connect input wire to gate
+            CircuitGraph.add_edge(cell_json[1]["connections"]["S"][0],cell_json[0],weight = -1) #connect input wire to gate
+            CircuitGraph.add_edge(cell_json[0],cell_json[1]["connections"]["Y"][0],weight = 0) #connect gate to output wire
+            wire_set.add(cell_json[1]["connections"]["Y"][0])
+            
         else:
             CircuitGraph.add_edge(cell_json[1]["connections"]["A"][0],cell_json[0],weight = -1) #connect input wire to gate
             CircuitGraph.add_edge(cell_json[1]["connections"]["B"][0],cell_json[0],weight = -1) #connect input wire to gate
-            gate_input_set.add(cell_json[1]["connections"]["A"][0])
-            gate_input_set.add(cell_json[1]["connections"]["B"][0])
             CircuitGraph.add_edge(cell_json[0],cell_json[1]["connections"]["Y"][0],weight = 0) #connect gate to output wire
             wire_set.add(cell_json[1]["connections"]["Y"][0])
 
-wire_array = list(wire_set - (set(output_array) - gate_input_set)) #To map wires to c++ array, give an order to wires.
+wire_array = list(wire_set - set(output_array)) #To map wires to c++ array, give an order to wires.
 
 #print(list(nx.DiGraph.predecessors(CircuitGraph,"$abc$49$auto$blifparse.cc:371:parse_blif$50")))
 #nx.draw(CircuitGraph,labels=gate_type)
@@ -127,6 +132,7 @@ for i in range(total_step):
         result = ""
         ca = ""
         cb = ""
+        cc = ""
 
         wire = module_netlist["cells"][gate]["connections"]["Y"][0]
         if wire in output_array:
@@ -141,19 +147,25 @@ for i in range(total_step):
             ca = "cipherout[" + str(output_array.index(wire)) + "]"
         else :
             ca = "cipherwire[" + str(current_wire.index(wire)) + "]"
-        if gate_type[gate] == "NOT":
-            cb = ""
-        else:
+        if gate_type[gate] != "NOT":
             wire = module_netlist["cells"][gate]["connections"]["B"][0]
             if wire in input_array:
-                cb = "cipherin["  + str(input_array.index(wire)) +"],"
+                cb = "&cipherin["  + str(input_array.index(wire)) +"],"
             elif wire in output_array:
-                cb = "cipherout[" + str(output_array.index(wire)) + "]"
+                cb = "&cipherout[" + str(output_array.index(wire)) + "],"
             else :
-                cb = "cipherwire[" + str(current_wire.index(wire)) + "],"
+                cb = "&cipherwire[" + str(current_wire.index(wire)) + "],"
+        
+        if gate_type[gate] == "MUX":
+            wire = module_netlist["cells"][gate]["connections"]["S"][0]
+            if wire in input_array:
+                cc = "&cipherin["  + str(input_array.index(wire)) +"],"
+            elif wire in output_array:
+                cc = "&cipherout[" + str(output_array.index(wire)) + "],"
+            else :
+                cc = "&cipherwire[" + str(current_wire.index(wire)) + "],"
 
-        gate_template_array[i].append([gate_type[gate],result,ca,cb])
-
+        gate_template_array[i].append([gate_type[gate],result,ca,cb,cc])
     for delete_wire in wire_delete_array[i]:
         current_wire[current_wire.index(delete_wire)] = -1 #deleted wires are marked as deleted
 
