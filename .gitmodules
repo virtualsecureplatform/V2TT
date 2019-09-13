@@ -1,3 +1,6 @@
 [submodule "KRISP/amethyst/rv16k-amethyst"]
 	path = KRISP/amethyst/rv16k-amethyst
 	url = https://github.com/virtualsecureplatform/rv16k-amethyst.git
+[submodule "KRISP/aquamarine/rv16k-aquamarine"]
+	path = KRISP/aquamarine/rv16k-aquamarine
+	url = https://github.com/virtualsecureplatform/rv16k-aquamarine.git
