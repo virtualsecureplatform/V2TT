@@ -20,4 +20,4 @@ tfhe: cloud.cpp
 
 .PHONY: clean
 clean :
-	sudo rm cloud.cpp client cloud verify *.key *.data *.svg *.json *.v
+	sudo rm cloud.cpp client cloud verify *.key *.data *.svg *.json *.v *.anno *.fir

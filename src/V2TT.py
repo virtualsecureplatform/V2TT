@@ -139,8 +139,11 @@ for i in range(total_step):
             result = "cipherout[" + str(output_array.index(wire)) + "]"
         else :
             result = "cipherwire["+ str(current_wire.index(wire)) + "]"
-
-        wire = module_netlist["cells"][gate]["connections"]["A"][0]
+        
+        if gate_type[gate] == "MUX":
+            wire = module_netlist["cells"][gate]["connections"]["S"][0]
+        else:
+            wire = module_netlist["cells"][gate]["connections"]["A"][0]
         if wire in input_array:
             ca = "cipherin[" + str(input_array.index(wire)) + "]"
         elif wire in output_array:
@@ -156,14 +159,14 @@ for i in range(total_step):
             else :
                 cb = "&cipherwire[" + str(current_wire.index(wire)) + "],"
         
-        if gate_type[gate] == "MUX":
-            wire = module_netlist["cells"][gate]["connections"]["S"][0]
-            if wire in input_array:
-                cc = "&cipherin["  + str(input_array.index(wire)) +"],"
-            elif wire in output_array:
-                cc = "&cipherout[" + str(output_array.index(wire)) + "],"
-            else :
-                cc = "&cipherwire[" + str(current_wire.index(wire)) + "],"
+            if gate_type[gate] == "MUX":
+                wire = module_netlist["cells"][gate]["connections"]["A"][0]
+                if wire in input_array:
+                    cc = "&cipherin["  + str(input_array.index(wire)) +"],"
+                elif wire in output_array:
+                    cc = "&cipherout[" + str(output_array.index(wire)) + "],"
+                else :
+                    cc = "&cipherwire[" + str(current_wire.index(wire)) + "],"
 
         gate_template_array[i].append([gate_type[gate],result,ca,cb,cc])
     for delete_wire in wire_delete_array[i]:
