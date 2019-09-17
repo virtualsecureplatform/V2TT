@@ -5,13 +5,10 @@
 #include <cstring>
 #include <chrono>
 
-int main(int argc, char *argv[]) {
+int main() {
+    std::cout << "How many times this circuit have to be evaluated?" << std::endl;
     int number_of_clock;
-    if(argc == 1){
-        number_of_clock = 1;
-    }else{
-        number_of_clock = std::atoi(argv[1]);
-    }
+    std::cin >> number_of_clock;
 
     std::chrono::system_clock::time_point start, end; 
     start = std::chrono::system_clock::now();

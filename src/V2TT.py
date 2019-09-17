@@ -139,7 +139,8 @@ for i in range(total_step):
             result = "cipherout[" + str(output_array.index(wire)) + "]"
         else :
             result = "cipherwire["+ str(current_wire.index(wire)) + "]"
-        
+
+        #MUX's wires' notations are not same between Yosys and TFHE.
         if gate_type[gate] == "MUX":
             wire = module_netlist["cells"][gate]["connections"]["S"][0]
         else:
