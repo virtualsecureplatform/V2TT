@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 
-int main() {
+int main(int argc, char *argv[]) {
     //generate a keyset
     const int minimum_lambda = 110;
     TFheGateBootstrappingParameterSet* params = new_default_gate_bootstrapping_parameters(minimum_lambda);
@@ -24,36 +24,42 @@ int main() {
     fclose(cloud_key);
    
     //generate encrypt the input
-    LweSample* ciphertext = new_gate_bootstrapping_ciphertext_array(14, params);
+    LweSample* ciphertext = new_gate_bootstrapping_ciphertext_array(111, params);
     //Unused ones
     bootsSymEncrypt(&ciphertext[0], 0, key);
     bootsSymEncrypt(&ciphertext[1], 0, key);
-    //io_in
-    bootsSymEncrypt(&ciphertext[2], 0, key);
-    bootsSymEncrypt(&ciphertext[3], 0, key);
-    //io_address
-    bootsSymEncrypt(&ciphertext[4], 0, key);
-    //io_writeEnable
-    bootsSymEncrypt(&ciphertext[5], 1, key);
-    //mem[0]
-    bootsSymEncrypt(&ciphertext[7], 1, key);
-    bootsSymEncrypt(&ciphertext[8], 0, key);
-    //mem[1]
-    bootsSymEncrypt(&ciphertext[9], 0, key);
-    bootsSymEncrypt(&ciphertext[10], 1, key);
-    //Buffer
-    bootsSymEncrypt(&ciphertext[6], 0, key);
-    bootsSymEncrypt(&ciphertext[11], 0, key);
-    bootsSymEncrypt(&ciphertext[12], 0, key);
-    bootsSymEncrypt(&ciphertext[13], 0, key);
+
+    //io_in_opcode
+    for(int i =0;i<3;i++)
+        bootsSymEncrypt(&ciphertext[i+2], (std::atoi(argv[1])>>i)&1, key);
+    //io_in_inA
+    for(int i =0;i<16;i++)
+        bootsSymEncrypt(&ciphertext[i+5], (std::atoi(argv[2])>>i)&1, key);
+    //io_in_B
+    for(int i =0;i<16;i++)
+        bootsSymEncrypt(&ciphertext[i+21], (std::atoi(argv[3])>>i)&1, key);
+    //io_Shift_Sig
+    bootsSymEncrypt(&ciphertext[37], std::atoi(argv[4]), key);
+    //io_Enable
+    bootsSymEncrypt(&ciphertext[38], std::atoi(argv[5]), key);
+    //io_memWriteDataIn
+    for(int i =0;i<16;i++)
+        bootsSymEncrypt(&ciphertext[i+39], (std::atoi(argv[6])>>i)&1, key);
+    //io_memByteEnableIn
+    bootsSymEncrypt(&ciphertext[55], std::atoi(argv[7]), key);
+    //io_memSignExtIn
+    bootsSymEncrypt(&ciphertext[56], std::atoi(argv[8]), key);
+    //Initialize Buffer
+    for(int i=0;i<111-57;i++)
+        bootsSymEncrypt(&ciphertext[i+57], 0, key);
 
     //export the 14 ciphertexts to a file (for the cloud)
     FILE* cloud_data = fopen("cloud.data","wb");
-    for (int i=0; i<14; i++) export_gate_bootstrapping_ciphertext_toFile(cloud_data, &ciphertext[i], params);
+    for (int i=0; i<111; i++) export_gate_bootstrapping_ciphertext_toFile(cloud_data, &ciphertext[i], params);
     fclose(cloud_data);
 
     //clean up all pointers
-    delete_gate_bootstrapping_ciphertext_array(14, ciphertext);
+    delete_gate_bootstrapping_ciphertext_array(111, ciphertext);
     delete_gate_bootstrapping_secret_keyset(key);
     delete_gate_bootstrapping_parameters(params);
 
