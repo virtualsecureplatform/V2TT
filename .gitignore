@@ -10,6 +10,8 @@ circuit.json
 /test/*/target
 /Dockerfiles/*/project
 /Dockerfiles/*/target
+/KRISP/*/test/*/project
+/KRISP/*/test/*/target
 verify
 cloud
 client

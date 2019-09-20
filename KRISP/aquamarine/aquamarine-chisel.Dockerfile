@@ -8,6 +8,4 @@ COPY ./rv16k-aquamarine /build
 
 WORKDIR /build
 
-RUN sbt run 
-
-RUN rm -r /build
+RUN sbt run && rm -r /build

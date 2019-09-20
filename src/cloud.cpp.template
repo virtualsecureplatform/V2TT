@@ -8,7 +8,7 @@
 int main(int argc, char *argv[]) {
     int number_of_clock;
     if(argc == 1){
-        number_of_clock = 1;
+        number_of_clock = 0;
     }else{
         number_of_clock = std::atoi(argv[1]);
     }
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     fclose(cloud_data);
 
     //do operations described as circuit:
-    for(int clock = 0; clock < number_of_clock; clock++){
+    for(int clock = 0; clock < number_of_clock + 1; clock++){
         {%- for stage in gate_template_array %}
         #pragma omp parallel sections
         {

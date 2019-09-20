@@ -6,7 +6,7 @@ V2TT:
 	docker run --rm -v $(shell pwd)/../../../../src:/src -v $(shell pwd)/../../:/build networkx-ninja2-python3 /bin/sh -c "cd /src && python3 V2TT.py /build/ExUnit.json && mv /build/cloud.cpp /build/test/ExUnit/"
 
 tfhe: cloud.cpp
-	docker run -it --rm -v  $(shell pwd):/build tfhe-ubuntu /bin/sh -c "cd /build && clang++ -ltfhe-fftw -fopenmp -o cloud cloud.cpp && clang++ -ltfhe-fftw client.cpp -o client && clang++ -ltfhe-fftw -o verify verify.cpp && bash ./test.bash"
+	docker run -it --rm -v  $(shell pwd):/build chisel-tfhe /bin/sh -c "cd /build && clang++ -ltfhe-fftw -fopenmp -o cloud cloud.cpp && clang++ -ltfhe-fftw client.cpp -o client && clang++ -Ofast -ltfhe-fftw -o verify verify.cpp && sbt test"
 
 docker-aquamarine:
 	 docker build -t aquamarine-chisel:latest -f aquamarine-chisel.Dockerfile .
