@@ -63,7 +63,6 @@ class ExUnitSpec extends ChiselFlatSpec{
           val b = Random.nextInt(0xFFFF)
           Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").!
           Process("./cloud 1").!
-          println("Here")
           val ans = Process("./verify").lineStream.toList
 
           val res = b
