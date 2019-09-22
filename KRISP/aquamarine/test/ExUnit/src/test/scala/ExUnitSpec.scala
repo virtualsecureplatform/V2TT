@@ -28,6 +28,9 @@ import scala.util.Random
 class ExUnitSpec extends ChiselFlatSpec{
         def expect(ans: Int, res: Int){
           if (ans != res){
+            println(ans)
+            println(res)
+            println("Error")
             sys.exit(0)
           }
         }
@@ -75,8 +78,8 @@ class ExUnitSpec extends ChiselFlatSpec{
           val opcode = 2
           val a = Random.nextInt(0xFFFF)
           val b = Random.nextInt(0xFFFF)
-          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").run
-          Process("./cloud 1").run
+          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").!
+          Process("./cloud 1").!
           val ans = Process("./verify").lineStream.toList
           val res = a + b
           expect(ans(0).toInt, (res & 0xFFFF))
@@ -88,8 +91,8 @@ class ExUnitSpec extends ChiselFlatSpec{
           val opcode = 3
           val a = Random.nextInt() & 0xFFFF
           val b = Random.nextInt() & 0xFFFF
-          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").run
-          Process("./cloud 1").run
+          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").!
+          Process("./cloud 1").!
           val ans = Process("./verify").lineStream.toList
           val res = a + ((~b)&0xFFFF) + 1
           expect(ans(0).toInt, (res & 0xFFFF))
@@ -101,8 +104,8 @@ class ExUnitSpec extends ChiselFlatSpec{
           val opcode = 4
           val a = Random.nextInt() & 0xFFFF
           val b = Random.nextInt() & 0xFFFF
-          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").run
-          Process("./cloud 1").run
+          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").!
+          Process("./cloud 1").!
           val ans = Process("./verify").lineStream.toList
           val res = a & b
           expect(ans(0).toInt, (res & 0xFFFF))
@@ -114,8 +117,8 @@ class ExUnitSpec extends ChiselFlatSpec{
           val opcode = 5
           val a = Random.nextInt() & 0xFFFF
           val b = Random.nextInt() & 0xFFFF
-          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").run
-          Process("./cloud 1").run
+          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").!
+          Process("./cloud 1").!
           val ans = Process("./verify").lineStream.toList
           val res = a | b
           expect(ans(0).toInt, (res & 0xFFFF))
@@ -127,8 +130,8 @@ class ExUnitSpec extends ChiselFlatSpec{
           val opcode = 6
           val a = Random.nextInt() & 0xFFFF
           val b = Random.nextInt() & 0xFFFF
-          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").run
-          Process("./cloud 1").run
+          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").!
+          Process("./cloud 1").!
           val ans = Process("./verify").lineStream.toList
           val res = a ^ b
           expect(ans(0).toInt, (res & 0xFFFF))
@@ -141,8 +144,8 @@ class ExUnitSpec extends ChiselFlatSpec{
           val opcode = 1
           val a = Random.nextInt() & 0xFFFF
           val b = Random.nextInt() & 0x1F
-          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").run
-          Process("./cloud 1").run
+          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").!
+          Process("./cloud 1").!
           val ans = Process("./verify").lineStream.toList
           val res = (a << b) & 0xFFFF
           expect(ans(0).toInt, res)
@@ -154,8 +157,8 @@ class ExUnitSpec extends ChiselFlatSpec{
           val opcode = 2
           val a = Random.nextInt() & 0xFFFF
           val b = Random.nextInt() & 0x1F
-          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").run
-          Process("./cloud 1").run
+          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").!
+          Process("./cloud 1").!
           val ans = Process("./verify").lineStream.toList
           val res = (a >> b) & 0xFFFF
           expect(ans(0).toInt, res)
@@ -167,8 +170,8 @@ class ExUnitSpec extends ChiselFlatSpec{
           val opcode = 4
           val a = Random.nextInt() & 0xFFFF
           val b = Random.nextInt() & 0x1F
-          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").run
-          Process("./cloud 1").run
+          Process("./client " + opcode.toString + " " + a.toString + " " + b.toString + " " + shifterSig.toString + " " + enable.toString + " 0 0 0").!
+          Process("./cloud 1").!
           val ans = Process("./verify").lineStream.toList
 
           def shift_arithmetic(v: Int, shamt: Int): Int = {

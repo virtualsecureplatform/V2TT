@@ -1,0 +1,21 @@
+--- client.cpp	2019-09-22 11:46:57.927241259 +0900
++++ client-edited.cpp	2019-09-22 11:46:01.170448008 +0900
+@@ -35,8 +35,16 @@
+     //io_Enable
+     for(int i = 0;i < 1;i++)bootsSymEncrypt(&ciphertext[i + 12], (std::atoi(argv[3])>>i)&1, key);
+ 
+-    //Initialize Buffer
+-    for(int i = 0; i <22 - 13;i++)bootsSymEncrypt(&ciphertext[i + 13], 0, key);
++    //Initialize RegPC
++    bootsSymEncrypt(&ciphertext[17], (std::atoi(argv[4])>>0)&1, key);
++    bootsSymEncrypt(&ciphertext[18], (std::atoi(argv[4])>>1)&1, key);
++    bootsSymEncrypt(&ciphertext[19], (std::atoi(argv[4])>>2)&1, key);
++    bootsSymEncrypt(&ciphertext[20], (std::atoi(argv[4])>>3)&1, key);
++    bootsSymEncrypt(&ciphertext[21], (std::atoi(argv[4])>>4)&1, key);
++    bootsSymEncrypt(&ciphertext[13], (std::atoi(argv[4])>>5)&1, key);
++    bootsSymEncrypt(&ciphertext[14], (std::atoi(argv[4])>>6)&1, key);
++    bootsSymEncrypt(&ciphertext[15], (std::atoi(argv[4])>>7)&1, key);
++    bootsSymEncrypt(&ciphertext[16], (std::atoi(argv[4])>>8)&1, key);
+ 
+     //export the 22 ciphertexts to a file (for the cloud)
+     FILE* cloud_data = fopen("cloud.data","wb");

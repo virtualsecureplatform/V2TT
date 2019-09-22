@@ -5,13 +5,14 @@ cloud.cpp
 *.key
 *.anno
 *.fir
-circuit.json
+*.svg
 /test/*/project
 /test/*/target
 /Dockerfiles/*/project
 /Dockerfiles/*/target
-/KRISP/*/test/*/project
+/KRISP/*/test/*/project/target
 /KRISP/*/test/*/target
 verify
 cloud
 client
+/src/*.pickle

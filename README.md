@@ -13,3 +13,6 @@ sudo make circuit
 sudo make V2TT
 sudo make tfhe
 ```
+
+Most of codes can be run by same procedure.
+Since this project is under development, some old codes may not workable.

@@ -1,8 +1,8 @@
 # read design 
-read_verilog ExUnit.v
+read_verilog IfUnit.v
 
 # elaborate design hierarchy
-hierarchy -check -top ExUnit
+hierarchy -check -top IfUnit
 
 # the high-level stuff
 proc; opt; fsm; opt; memory; opt
@@ -20,7 +20,7 @@ abc -g gates,MUX
 clean -purge
 
 # write synthesized design
-write_json ExUnit.json
+write_json IfUnit.json
 
 #check output circuit
-show -prefix ExUnit -format svg
+show -prefix IfUnit -format svg

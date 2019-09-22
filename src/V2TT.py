@@ -5,6 +5,7 @@ import sys
 from os.path import dirname
 #import matplotlib.pyplot as plt
 from jinja2 import Template, Environment, FileSystemLoader #jinja2 is used to prduce c++ source code
+import pickle #To save some analyzed data
 
 '''
 PROGRAM FLOW
@@ -179,15 +180,25 @@ for i in range(total_step):
     for delete_wire in wire_delete_array[i]:
         current_wire[current_wire.index(delete_wire)] = -1 #deleted wires are marked as deleted
 
-DFF_template_array=[]
+#Connect DFF's Q port and D port.
+DFF_template_array = []
 for DFF in DFF_array:
     DFF_template_array.append([input_array.index(DFF[0]),output_array.index(DFF[1])])
+
+#If input ports, including DFFs' D ports, are directly connected to outputs, above code do nothing. So, connecting is needed.
+direct_port_template_array = []
+for inport in input_array:
+    if inport in output_array:
+        direct_port_template_array.append([output_array.index(inport),input_array.index(inport)])
 
 #print(template_array)
 #print(len(current_wire))
 
-data ={"input_width":len(input_array), "output_width":len(output_array), "wire_max":len(current_wire), "gate_template_array":gate_template_array,"DFF_array":DFF_template_array,"number_of_DFF":len(DFF_template_array)} #Map recorded arrays to template's input.
+data ={"input_width":len(input_array), "output_width":len(output_array), "wire_max":len(current_wire), "gate_template_array":gate_template_array,"DFF_array":DFF_template_array,"number_of_DFF":len(DFF_template_array),"direct_port_pairs":direct_port_template_array} #Map recorded arrays to template's input.
 cloud_template_result = Environment(loader=FileSystemLoader('.')).get_template("cloud.cpp.template").render(data) #Load template
 #print(str(cloud_template_result))
 with open(dirname(sys.argv[1])+"/cloud.cpp","w") as f:
     f.write(cloud_template_result) #generate c++ code
+
+with open('bitwidth.pickle', mode='wb') as f:
+    pickle.dump({"input_bit_width":len(input_array),"output_bit_width":len(output_array)}, f)

@@ -54,6 +54,11 @@ int main(int argc, char *argv[]) {
         {%- endfor %}
         }
     }
+    
+    //Copy input ports' data to output ports when they are directly conneted.
+    {%- for pair in direct_port_pairs %}
+    lweCopy(&cipherout[{{ pair[0] }}],&cipherin[{{ pair[1] }}],bk->params->in_out_params);
+    {%- endfor %}
 
     //export the {{ output_width }} ciphertexts to a file (for the cloud)
     FILE* answer_data = fopen("answer.data","wb");
