@@ -1,0 +1,286 @@
+{
+  "creator": "Yosys 0.9 (git sha1 1979e0b, clang 8.0.0 -fPIC -Os)",
+  "modules": {
+    "StateMachine": {
+      "attributes": {
+        "top": 1,
+        "src": "StateMachine.v:14"
+      },
+      "ports": {
+        "clock": {
+          "direction": "input",
+          "bits": [ 2 ]
+        },
+        "reset": {
+          "direction": "input",
+          "bits": [ 3 ]
+        },
+        "io_clockIF": {
+          "direction": "output",
+          "bits": [ 4 ]
+        },
+        "io_clockID": {
+          "direction": "output",
+          "bits": [ 5 ]
+        },
+        "io_clockEX": {
+          "direction": "output",
+          "bits": [ 6 ]
+        },
+        "io_clockMEM": {
+          "direction": "output",
+          "bits": [ 7 ]
+        },
+        "io_clockWB": {
+          "direction": "output",
+          "bits": [ 8 ]
+        }
+      },
+      "cells": {
+        "$abc$60$auto$blifparse.cc:371:parse_blif$61": {
+          "hide_name": 1,
+          "type": "$_ANDNOT_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 8 ],
+            "B": [ 3 ],
+            "Y": [ 9 ]
+          }
+        },
+        "$abc$60$auto$blifparse.cc:371:parse_blif$62": {
+          "hide_name": 1,
+          "type": "$_OR_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 3 ],
+            "B": [ 4 ],
+            "Y": [ 10 ]
+          }
+        },
+        "$abc$60$auto$blifparse.cc:371:parse_blif$63": {
+          "hide_name": 1,
+          "type": "$_ANDNOT_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 5 ],
+            "B": [ 3 ],
+            "Y": [ 11 ]
+          }
+        },
+        "$abc$60$auto$blifparse.cc:371:parse_blif$64": {
+          "hide_name": 1,
+          "type": "$_ANDNOT_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 6 ],
+            "B": [ 3 ],
+            "Y": [ 12 ]
+          }
+        },
+        "$abc$60$auto$blifparse.cc:371:parse_blif$65": {
+          "hide_name": 1,
+          "type": "$_ANDNOT_",
+          "parameters": {
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 7 ],
+            "B": [ 3 ],
+            "Y": [ 13 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$55": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "StateMachine.v:54"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 9 ],
+            "Q": [ 4 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$56": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "StateMachine.v:54"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 10 ],
+            "Q": [ 5 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$57": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "StateMachine.v:54"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 11 ],
+            "Q": [ 6 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$58": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "StateMachine.v:54"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 12 ],
+            "Q": [ 7 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$59": {
+          "hide_name": 1,
+          "type": "$_DFF_P_",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "StateMachine.v:54"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 2 ],
+            "D": [ 13 ],
+            "Q": [ 8 ]
+          }
+        }
+      },
+      "netnames": {
+        "$0\\state[4:0]": {
+          "hide_name": 1,
+          "bits": [ 9, 10, 11, 12, 13 ],
+          "attributes": {
+            "src": "StateMachine.v:54"
+          }
+        },
+        "clock": {
+          "hide_name": 0,
+          "bits": [ 2 ],
+          "attributes": {
+            "src": "StateMachine.v:15"
+          }
+        },
+        "io_clockEX": {
+          "hide_name": 0,
+          "bits": [ 6 ],
+          "attributes": {
+            "src": "StateMachine.v:19"
+          }
+        },
+        "io_clockID": {
+          "hide_name": 0,
+          "bits": [ 5 ],
+          "attributes": {
+            "src": "StateMachine.v:18"
+          }
+        },
+        "io_clockIF": {
+          "hide_name": 0,
+          "bits": [ 4 ],
+          "attributes": {
+            "src": "StateMachine.v:17"
+          }
+        },
+        "io_clockMEM": {
+          "hide_name": 0,
+          "bits": [ 7 ],
+          "attributes": {
+            "src": "StateMachine.v:20"
+          }
+        },
+        "io_clockWB": {
+          "hide_name": 0,
+          "bits": [ 8 ],
+          "attributes": {
+            "src": "StateMachine.v:21"
+          }
+        },
+        "reset": {
+          "hide_name": 0,
+          "bits": [ 3 ],
+          "attributes": {
+            "src": "StateMachine.v:16"
+          }
+        }
+      }
+    }
+  }
+}

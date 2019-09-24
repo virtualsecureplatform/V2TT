@@ -18,7 +18,7 @@ import chisel3._
 import chisel3.util.MuxLookup
 
 class LURomPort extends Bundle {
-  val address = Input(UInt(2.W))
+  val address = Input(UInt(3.W))
   val rom = Vec(4,Input(UInt(2.W)))
 
   val out = Output(UInt(2.W))
@@ -31,5 +31,9 @@ class LURom extends Module {
   for(i <- 0 to 3){
       data = data :+ (i.U -> io.rom(i))
   }
-  io.out := MuxLookup(io.address,0.U,data)
+  io.out := MuxLookup(io.address >> 1,0.U,data)
+}
+
+object Elaborate extends App {
+  chisel3.Driver.execute(args, () => new LURom())
 }

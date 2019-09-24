@@ -1,5 +1,5 @@
 circuit:
-	docker run --rm -v ${shell pwd}/../../rv16k-aquamarine:/build aquamarine-chisel /bin/sh -c "cd /build && sbt run && rm *.anno *.fir"
+	docker run --rm -v ${shell pwd}/../../rv16k-aquamarine:/build chisel-tfhe /bin/sh -c "cd /build &&  sed -i -e 's/new .*)/new ExUnit)/g' ./src/main/scala/Main.scala && sbt run && rm *.anno *.fir"
 	docker run --rm -v /tmp/.X11-unix/:/tmp/.X11-unix -v ${shell pwd}/../../:/build yosys:0.9 /bin/sh -c "cd /build/rv16k-aquamarine && yosys ../test/ExUnit/build.ys && mv *.json ../"
 
 V2TT:

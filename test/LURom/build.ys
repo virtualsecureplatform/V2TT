@@ -1,8 +1,8 @@
 # read design 
-read_verilog TopUnit.v
+read_verilog LURom.v
 
 # elaborate design hierarchy
-hierarchy -check -top TopUnit
+hierarchy -check -top LURom
 
 # the high-level stuff
 proc; opt; fsm; opt; memory; opt
@@ -20,7 +20,7 @@ abc -g gates,MUX
 clean -purge
 
 # write synthesized design
-write_json circuit.json
+write_json LURom.json
 
 #check output circuit
-#show -prefix circuit -format ps
+show -prefix LURom -format svg

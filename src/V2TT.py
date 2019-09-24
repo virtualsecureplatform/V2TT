@@ -202,3 +202,5 @@ with open(dirname(sys.argv[1])+"/cloud.cpp","w") as f:
 
 with open('bitwidth.pickle', mode='wb') as f:
     pickle.dump({"input_bit_width":len(input_array),"output_bit_width":len(output_array)}, f)
+
+print(input_array.index(4143))

@@ -1,0 +1,26 @@
+# read design 
+read_verilog Decoder.v
+
+# elaborate design hierarchy
+hierarchy -check -top Decoder
+
+# the high-level stuff
+proc; opt; fsm; opt; memory; opt
+
+# mapping to internal cell library
+techmap; opt
+
+#To make easy to parse for V2TT
+flatten;
+
+# mapping logic to gates.
+abc -g gates,MUX
+
+# cleanup
+clean -purge
+
+# write synthesized design
+write_json Decoder.json
+
+#check output circuit
+show -prefix Decoder -format svg

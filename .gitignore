@@ -1,5 +1,4 @@
 *.out
-cloud.cpp
 /.vsvode
 *.data
 *.key
