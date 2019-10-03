@@ -2,7 +2,7 @@ FROM ubuntu:19.04
 
 LABEL maintainer="nindanaoto <dirty.knife603@gmail.com>"
 
-RUN apt-get update && apt-get upgrade -y && apt install && apt-get install -y build-essential cmake libfftw3-dev clang libomp-dev git && git clone  --depth 1 https://github.com/tfhe/tfhe.git
+RUN apt-get update && apt-get upgrade -y && apt-get install -y build-essential cmake libfftw3-dev clang libomp-dev git && git clone  --depth 1 https://github.com/tfhe/tfhe.git
 
 WORKDIR tfhe/build
 

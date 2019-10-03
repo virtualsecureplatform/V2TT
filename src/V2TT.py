@@ -82,6 +82,8 @@ wire_array = list(wire_set - set(output_array)) #To map wires to c++ array, give
 #nx.draw(CircuitGraph,labels=gate_type)
 #plt.show()
 
+#End of Middleend
+
 total_step = -nx.algorithms.shortest_paths.weighted.bellman_ford_path_length(CircuitGraph,"In","Out") #Knowing Maximal stage may be simplify algorithm.
 #print(total_step)
 
