@@ -16,4 +16,4 @@ COPY ./rv16k-aquamarine /build
 
 WORKDIR /build
 
-RUN sbt run && pip3 install cupy-cuda101 && rm -r /build 
+RUN sbt run && rm -r /build 
