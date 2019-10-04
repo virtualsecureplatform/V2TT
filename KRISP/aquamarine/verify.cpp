@@ -12,12 +12,12 @@ int main() {
     //if necessary, the params are inside the key
     const TFheGateBootstrappingParameterSet* params = key->params;
 
-    //read the 4609 ciphertexts of the result
-    LweSample* answer = new_gate_bootstrapping_ciphertext_array(4609, params);
+    //read the 4613 ciphertexts of the result
+    LweSample* answer = new_gate_bootstrapping_ciphertext_array(4613, params);
 
-    //import the 4609 ciphertexts from the answer file
+    //import the 4613 ciphertexts from the answer file
     FILE* answer_data = fopen("answer.data","rb");
-    for (int i = 0; i < 4609; i++) import_gate_bootstrapping_ciphertext_fromFile(answer_data, &answer[i], params);
+    for (int i = 0; i < 4613; i++) import_gate_bootstrapping_ciphertext_fromFile(answer_data, &answer[i], params);
     fclose(answer_data);
 
     //decrypt and print plaintext answer
@@ -47,19 +47,19 @@ int main() {
     std::cout << int_answer << std::endl;
     int_answer = 0;
     //io_debugImmLongState
-    for (int i = 0; i < 1; i++) int_answer |= (bootsSymDecrypt(&answer[i + 56], key)<<i);
+    for (int i = 0; i < 2; i++) int_answer |= (bootsSymDecrypt(&answer[i + 56], key)<<i);
     std::cout << int_answer << std::endl;
     int_answer = 0;
     //io_debugimmLongInst
-    for (int i = 0; i < 16; i++) int_answer |= (bootsSymDecrypt(&answer[i + 57], key)<<i);
+    for (int i = 0; i < 16; i++) int_answer |= (bootsSymDecrypt(&answer[i + 58], key)<<i);
     std::cout << int_answer << std::endl;
     int_answer = 0;
     //io_debugpRegInst
-    for (int i = 0; i < 16; i++) int_answer |= (bootsSymDecrypt(&answer[i + 73], key)<<i);
+    for (int i = 0; i < 16; i++) int_answer |= (bootsSymDecrypt(&answer[i + 74], key)<<i);
     std::cout << int_answer << std::endl;
     int_answer = 0;
     
     //clean up all pointers
-    delete_gate_bootstrapping_ciphertext_array(4609, answer);
+    delete_gate_bootstrapping_ciphertext_array(4613, answer);
     delete_gate_bootstrapping_secret_keyset(key);
 }

@@ -35,7 +35,7 @@ int main(int argc, char *argi[]) {
     for(int i = 0; i < INST_ROM_SIZE/2; i++) argv[i+1] = static_cast<uint16_t>(cpu.inst_rom[2*i]) + (static_cast<uint16_t>(cpu.inst_rom[2*i+1]) << 8);
    
     //generate encrypt the input
-    LweSample* ciphertext = new_gate_bootstrapping_ciphertext_array(8619, params);
+    LweSample* ciphertext = new_gate_bootstrapping_ciphertext_array(8621, params);
     //Unused ones
     bootsSymEncrypt(&ciphertext[0], 0, key);
     bootsSymEncrypt(&ciphertext[1], 0, key);
@@ -553,16 +553,15 @@ int main(int argc, char *argi[]) {
     for(int i = 0;i < 16;i++)bootsSymEncrypt(&ciphertext[i + 4082], (argv[256]>>i)&1, key);
 
     //Initialize Buffer
-    for(int i = 0; i <8619 - 4098;i++)bootsSymEncrypt(&ciphertext[i + 4098], 0, key);
-    bootsSymEncrypt(&ciphertext[4484], 1, key);
+    for(int i = 0; i <8621 - 4098;i++)bootsSymEncrypt(&ciphertext[i + 4098], 0, key);
 
-    //export the 8619 ciphertexts to a file (for the cloud)
+    //export the 8621 ciphertexts to a file (for the cloud)
     FILE* cloud_data = fopen("cloud.data","wb");
-    for (int i=0; i<8619; i++) export_gate_bootstrapping_ciphertext_toFile(cloud_data, &ciphertext[i], params);
+    for (int i=0; i<8621; i++) export_gate_bootstrapping_ciphertext_toFile(cloud_data, &ciphertext[i], params);
     fclose(cloud_data);
 
     //clean up all pointers
-    delete_gate_bootstrapping_ciphertext_array(8619, ciphertext);
+    delete_gate_bootstrapping_ciphertext_array(8621, ciphertext);
     delete_gate_bootstrapping_secret_keyset(key);
     delete_gate_bootstrapping_parameters(params);
 
