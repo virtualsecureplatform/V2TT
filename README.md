@@ -1,3 +1,6 @@
+__This repository is not active anymore.
+See [kvsp](https://github.com/virtualsecureplatform/kvsp) instead.__
+
 # V2TT
 V2TT is short for "Verilog to TFHE Transcompiler".
 This is the repository for the transpiler to compile Verilog to C++ code with TFHE library.
