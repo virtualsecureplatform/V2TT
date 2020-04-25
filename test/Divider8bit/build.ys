@@ -1,0 +1,34 @@
+# read design 
+read_verilog Divider8bit.v
+
+# elaborate design hierarchy
+hierarchy -check -top Divider8bit
+
+#delete constants
+opt_expr; opt_clean;
+
+#detect error
+check
+
+#map adder
+wreduce; alumacc;
+
+# the high-level stuff
+share; proc; opt; fsm; opt; memory; opt
+
+# mapping to internal cell library
+techmap; opt
+
+# mapping logic to gates.
+abc -g gates,MUX
+
+# cleanup
+clean -purge
+
+stat
+
+# write synthesized design
+write_json circuit.json
+
+#check output circuit
+#show -prefix circuit -format svg
